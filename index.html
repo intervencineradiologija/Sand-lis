@@ -571,7 +571,7 @@ try{const o=JSON.parse(localStorage.getItem(OK_));if(o&&Array.isArray(o.ids))ui.
 function opItems(){return ui.op?S.log.filter(l=>l.type==='out'&&ui.op.ids.indexOf(l.id)>=0):[];}
 function opPanel(part){
   if(!ui.op)return part?'': '<div class="note" style="background:var(--surface);border:1px solid var(--line)"><b>Operacija</b> <span class="sub">(neprivaloma)</span><div class="sub" style="margin:2px 0 8px">Įveskite vieną kartą, o tada skenuokite priemones paeiliui. Jos susidės į sąrašą.</div>'+
-    '<div class="grid2"><div class="field"><label for="op-proc">Paciento / procedūros ID</label><input class="mono" id="op-proc" placeholder="IR-2026-1184" autocapitalize="characters" autocomplete="off" value="'+esc(ui.proc||'')+'"></div><div class="field"><label for="op-dr">Operatorius</label><input id="op-dr" autocomplete="off" value="'+esc(ui.dr||'')+'"></div></div>'+
+    '<div class="grid2"><div class="field"><label for="op-proc">Paciento / procedūros ID</label><input class="mono" id="op-proc" placeholder="IR-2026-1184" autocapitalize="characters" autocomplete="off" value="'+esc(ui.proc||'')+'"></div><div class="field"><label for="op-dr">Gydytojas</label><input id="op-dr" autocomplete="off" value="'+esc(ui.dr||'')+'"></div></div>'+
     '<div class="actions"><button class="btn full" data-act="opstart">Pradėti operaciją</button></div></div>';
   const it=opItems(),q=it.reduce((a,l)=>a+(l.qty||1),0);
   if(part)return it.length?'<h2>Operacijos priemonės · '+q+' vnt.</h2><div class="units">'+it.slice().reverse().map(l=>{const p=prod(l.gtin);return '<div class="urow"><div><b>'+esc(p?p.name:l.gtin)+'</b><div class="sub mono">'+esc(l.sn?'SN '+l.sn:'LOT '+l.lot)+'</div></div><div style="text-align:right"><span class="pill neutral">'+(l.qty>1?'× '+l.qty:'1 vnt.')+'</span><div class="sub">'+new Date(l.ts).toLocaleTimeString('lt-LT',{hour:'2-digit',minute:'2-digit'})+'</div></div></div>';}).join('')+'</div>':'';
@@ -728,14 +728,11 @@ function render(){
 }
 
 function movePanel(){
-  const need=S.catalog.map(p=>({p:p,n:orNeed(p,ui.dest)})).filter(x=>x.n>0);
   const trq=S.units.filter(u=>u.status==='in'&&u.loc===TR+ui.dest);
   let h='<div class="field" style="margin-top:12px"><label for="dest">Vežama į</label><select id="dest">'+ORS.map(o=>'<option'+(o===ui.dest?' selected':'')+'>'+o+'</option>').join('')+'</select></div>'+
     (trq.length?'<div class="note warn" style="margin-top:10px">Kelyje į '+esc(ui.dest)+': <b>'+qsum(trq)+' vnt.</b> laukia patvirtinimo. Gavimą turi patvirtinti operacinė.</div>':'')+
-    '<h2>Papildymo sąrašas · '+esc(ui.dest)+'</h2>';
-  if(!need.length)return h+(S.catalog.some(p=>orLevel(p,ui.dest)>0)?'<div class="note ok" style="margin-top:0">Operacinė turi visą minimalų kiekį.</div>':'<div class="note info" style="margin-top:0">Minimalus kiekis operacinėje dar nenustatytas. Nurodykite jį prekės kortelėje (Atsargos → prekė → Redaguoti prekę).</div>');
-  return h+'<div class="units">'+need.map(x=>{const w=qsum(usable(stockOf(x.p.gtin,WH)));
-    return '<div class="urow"><div><b>'+esc(x.p.name)+'</b><div class="sub mono">'+esc(x.p.size)+'</div></div><div style="text-align:right"><span class="pill neutral">+'+x.n+'</span><div class="sub">sandėlyje '+w+(w<x.n?' · trūksta':'')+'</div></div></div>';}).join('')+'</div>';
+    '';
+  return h;
 }
 
 function rcvBanner(){
