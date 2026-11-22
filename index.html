@@ -1,4 +1,4 @@
-<!doctype html><html lang="lt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Mano IR sandėlis</title><meta name="robots" content="noindex"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<!doctype html><html lang="lt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>IR sandėlis</title><meta name="robots" content="noindex"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
 
 <style>
 /* Layout: phone-first app shell. Header scrolls away, four views switched from a fixed bottom tab bar.
@@ -125,6 +125,18 @@ input.mono{font-family:var(--font-mono);font-size:14px}
 .grid2{align-items:end}
 .hint{font-size:12px;line-height:1.35;color:var(--muted)}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.dates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:end}
+.dates .field{min-width:0}
+input[type=date]{display:block;min-width:0;max-width:100%;box-sizing:border-box;-webkit-appearance:none;appearance:none;text-align:left;height:44px;line-height:44px}
+input[type=date]::-webkit-date-and-time-value{text-align:left;min-height:1.2em}
+.stbar{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:14px;align-items:end}
+.stbar .field{min-width:0}
+.stsec{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding-bottom:4px;margin-top:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.stsec::-webkit-scrollbar{display:none}
+.stsec .chip{flex:none;white-space:nowrap}
+.lgfil{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;margin-top:12px}
+.lgfil .dates{flex:1 1 320px;max-width:460px}
+.lgfil .chips{flex:1 1 auto}
 .btn{min-height:44px;padding:0 16px;border-radius:var(--r);border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:600;cursor:pointer}
 .btn.ghost{background:transparent;color:var(--accent)}
 .btn.line{background:transparent;color:var(--ink);border-color:var(--line)}
@@ -230,6 +242,13 @@ details .in{padding:0 12px 12px;display:flex;flex-direction:column;gap:10px}
 .stbar{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
 .foot{margin-top:22px;font-size:12.5px;color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){.toast{animation:up .18s ease-out}@keyframes up{from{opacity:0;transform:translate(-50%,6px)}}}
+@media (max-width:999px){
+  .lgfil .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1 1 100%;padding-bottom:2px}
+  .lgfil .chips::-webkit-scrollbar{display:none}
+  .lgfil .chips .chip{flex:none;white-space:nowrap}
+  .lgfil .dates{flex:1 1 100%;max-width:none}
+  .lg{grid-template-columns:50px 1fr}
+}
 @media (min-width:1000px){
   :root{--side:156px}
   body{padding-left:calc(var(--side) + 32px);padding-right:32px;padding-block:0 40px}
@@ -250,10 +269,12 @@ details .in{padding:0 12px 12px;display:flex;flex-direction:column;gap:10px}
   .sumstrip{grid-template-columns:repeat(4,1fr)}
   .sumstrip div:nth-child(odd){border-right:0}
   .sumstrip div:not(:last-child){border-right:1px solid var(--line)}
+  .stbar{grid-template-columns:minmax(0,260px) 1fr 1fr}
   .sfilters{grid-template-columns:2fr 1fr 1fr;align-items:end}
   .sfilters .field:first-child{grid-column:auto}
-  .plist,.loglist,.oplist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;align-items:start}
-  .plist>.empty,.loglist>.empty{grid-column:1/-1}
+  .loglist{display:block}
+  .plist,.oplist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;align-items:start}
+  .plist>.empty{grid-column:1/-1}
   .plist>.prow.open{grid-column:1/-1}
   .prow.open details{max-width:720px}
   .prow.open .egrid{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -460,7 +481,7 @@ function monthly(p){
     return S.log.filter(l=>l.type==='out'&&l.gtin===p.gtin&&l.ts>=cut).reduce((a,l)=>a+l.qty,0)/w*30;}
   return p.perMonth;
 }
-function cfg(){const c=S.cfg||{};return{minD:c.minD||14,maxD:c.maxD||60,transit:c.transit!==false,orDays:(()=>{const od=Object.assign({'Operacinė 1':2,'Operacinė 2':2,'Operacinė 3':3},c.orDays||{});ORS.forEach(o=>{if(!(o in od))od[o]=2;});return od;})()};}
+function cfg(){const c=S.cfg||{};return{minD:c.minD||14,maxD:c.maxD||60,transit:c.transit===true,orDays:(()=>{const od=Object.assign({'Operacinė 1':2,'Operacinė 2':2,'Operacinė 3':3},c.orDays||{});ORS.forEach(o=>{if(!(o in od))od[o]=2;});return od;})()};}
 const groups=()=>(S.groups&&S.groups.length?S.groups:DEFCATS);
 const abcOf=p=>p.abc||(p.trk==='batch'?'B':'A');
 const daily=p=>monthly(p)/30;
@@ -557,8 +578,8 @@ function opPanel(part){
   return '<div class="note info"><b>Vyksta operacija</b> · <span class="mono">'+esc(ui.op.proc||'be ID')+'</span>'+(ui.op.dr?' · '+esc(ui.op.dr):'')+'<br>Nuskenuotos priemonės: <b>'+q+' vnt.</b>'+
     '<div class="inline" style="margin-top:8px"><button class="btn line" data-act="opend">Baigti operaciją</button></div></div>';
 }
-const modesFor=()=>(ui.where===WH?['in','move','check']:['recv','use','check']).filter(k=>can(k)).map(k=>MODE_ALL[k]);
-(function(){let w=WH;try{const x=localStorage.getItem(WK);if(LOCS.indexOf(x)>=0)w=x;ui.uid=+localStorage.getItem(UK)||null;}catch(e){}ui.where=w;ui.place=w;ui.mode=w===WH?'in':'recv';})();
+const modesFor=()=>(ui.where===WH?['in','move','check']:(cfg().transit?['recv','use','check']:['use','check'])).filter(k=>can(k)).map(k=>MODE_ALL[k]);
+(function(){let w=WH;try{const x=localStorage.getItem(WK);if(LOCS.indexOf(x)>=0)w=x;ui.uid=+localStorage.getItem(UK)||null;}catch(e){}ui.where=w;ui.place=w;ui.mode=w===WH?'in':(cfg().transit?'recv':'use');})();
 function renderWhere(){
   const u=cur(),ml=myLocs();
   $('#whereBox').innerHTML='<label for="where">Darbo vieta</label><select id="where"'+(ml.length<2?' disabled':'')+'>'+(ml.length?ml:[ui.where]).map(l=>'<option'+(ui.where===l?' selected':'')+'>'+l+'</option>').join('')+'</select>';
@@ -1027,7 +1048,7 @@ function locSummary(){
   const cell=(k,b,s2)=>'<div><small>'+k+'</small><b>'+b+'</b>'+(s2?'<small>'+s2+'</small>':'')+'</div>';
   return '<h2 style="margin-top:14px">Santrauka · '+esc(W)+'</h2><div class="sumstrip">'+
     cell(isW?'Sandėlyje, vnt.':'Šioje operacinėje, vnt.',qsum(here))+
-    cell(isW?'Kelyje į operacines':'Kelyje į šią, vnt.',tq,isW?'laukia patvirtinimo':'laukia patvirtinimo')+
+    (cfg().transit||tq?cell(isW?'Kelyje į operacines':'Kelyje į šią, vnt.',tq,'laukia patvirtinimo'):'')+
     cell('Atsargų vertė',eur.format(val))+
     cell('Reikia dėmesio',low+exp,(isW?'užsakyti: ':'trūksta prekių: ')+low+' · galiojimas: '+exp)+'</div>';
 }
@@ -1079,7 +1100,7 @@ function opCard(o){
 }
 function opsView(){
   const L=opsList(),tdy=fmtDay(Date.now()),q=L.reduce((a,o)=>a+o.qty,0),v=L.reduce((a,o)=>a+o.val,0);
-  return '<div class="grid2" style="margin-top:12px"><div class="field"><label for="lfrom">Nuo</label><input id="lfrom" type="date" max="'+tdy+'" value="'+esc(ui.logFrom)+'"></div><div class="field"><label for="lto">Iki</label><input id="lto" type="date" max="'+tdy+'" value="'+esc(ui.logTo)+'"></div></div>'+
+  return '<div class="dates" style="margin-top:12px"><div class="field"><label for="lfrom">Nuo</label><input id="lfrom" type="date" max="'+tdy+'" value="'+esc(ui.logFrom)+'"></div><div class="field"><label for="lto">Iki</label><input id="lto" type="date" max="'+tdy+'" value="'+esc(ui.logTo)+'"></div></div>'+
     ((ui.logFrom||ui.logTo)?'<div class="chips" style="margin-top:8px"><button class="chip" data-act="lclear">Išvalyti datas</button></div>':'')+
     '<div class="note info"><b>'+L.length+' operacijų</b> · panaudota <b>'+q+' vnt.</b> · savikaina <b>'+eur.format(v)+'</b>'+(L.length?' · vidutiniškai '+(Math.round(q/L.length*10)/10).toString().replace('.',',')+' vnt. operacijai':'')+'</div>'+
     (L.length?'<div class="oplist">'+L.map(opCard).join('')+'</div>':'<div class="empty">Operacijų dar nėra. Jos atsiranda, kai panaudojimas registruojamas su procedūros ID arba per „Pradėti operaciją“.</div>')+
@@ -1095,8 +1116,8 @@ function vLogRows(){
   const shown=rows.slice(0,ui.logN);
   const F=[['all','Visi'],['in','Priėmimas'],['move','Perkėlimas'],['out','Panaudota'],['writeoff','Nurašymas']];
   const tdy=fmtDay(Date.now()),flab=F.find(f=>f[0]===ui.logF)[1];
-  return '<div class="chips" style="margin-top:12px">'+F.map(f=>'<button class="chip" data-act="logf" data-v="'+f[0]+'" aria-pressed="'+(ui.logF===f[0])+'">'+f[1]+'</button>').join('')+'</div>'+
-    '<div class="grid2" style="margin-top:10px"><div class="field"><label for="lfrom">Nuo</label><input id="lfrom" type="date" max="'+tdy+'" value="'+esc(ui.logFrom)+'"></div><div class="field"><label for="lto">Iki</label><input id="lto" type="date" max="'+tdy+'" value="'+esc(ui.logTo)+'"></div></div>'+
+  return '<div class="lgfil"><div class="chips">'+F.map(f=>'<button class="chip" data-act="logf" data-v="'+f[0]+'" aria-pressed="'+(ui.logF===f[0])+'">'+f[1]+'</button>').join('')+'</div>'+
+    '<div class="dates"><div class="field"><label for="lfrom">Nuo</label><input id="lfrom" type="date" max="'+tdy+'" value="'+esc(ui.logFrom)+'"></div><div class="field"><label for="lto">Iki</label><input id="lto" type="date" max="'+tdy+'" value="'+esc(ui.logTo)+'"></div></div></div>'+
     ((ui.logFrom||ui.logTo)?'<div class="chips" style="margin-top:8px"><button class="chip" data-act="lclear">Išvalyti datas</button></div>':'')+
     '<div class="loglist" style="margin-top:8px">'+(shown.map(logRow).join('')||'<div class="empty">Žurnalas tuščias. Įrašai atsiras po pirmo skenavimo.</div>')+'</div>'+
     (rows.length>shown.length?'<div class="actions"><button class="btn line" data-act="more">Rodyti daugiau ('+(rows.length-shown.length)+')</button></div>':'')+
@@ -1356,15 +1377,17 @@ function statItems(){
 }
 function vStat(){
   const P=[[7,'7 d.'],[30,'30 d.'],[90,'90 d.'],['m0','Šis mėnuo'],['m1','Praėjęs mėnuo'],[0,'Visas laikas'],['c','Pasirinkti datas']];
-  let h='<div class="chips" style="margin-top:14px">'+P.map(x=>'<button class="chip" data-act="statp" data-v="'+x[0]+'" aria-pressed="'+(ui.statP===x[0])+'">'+x[1]+'</button>').join('')+'</div>';
-  if(ui.statP==='c'){const tdy=fmtDay(Date.now());h+='<div class="grid2" style="margin-top:10px"><div class="field"><label for="sfrom">Nuo</label><input id="sfrom" type="date" max="'+tdy+'" value="'+esc(ui.statFrom)+'"></div><div class="field"><label for="sto">Iki</label><input id="sto" type="date" max="'+tdy+'" value="'+esc(ui.statTo)+'"></div></div>';}
+  const psel=(ui.statP==='c'&&ui.statSel)?ui.statSel:ui.statP;
+  let h='<div class="stbar"><div class="field"><label for="statsel">Laikotarpis</label><select id="statsel">'+P.map(x=>'<option value="'+x[0]+'"'+(String(psel)===String(x[0])?' selected':'')+'>'+x[1]+'</option>').join('')+'</select></div>';
+  if(ui.statP==='c'){const tdy=fmtDay(Date.now());h+='<div class="field"><label for="sfrom">Nuo</label><input id="sfrom" type="date" max="'+tdy+'" value="'+esc(ui.statFrom)+'"></div><div class="field"><label for="sto">Iki</label><input id="sto" type="date" max="'+tdy+'" value="'+esc(ui.statTo)+'"></div>';}
+  h+='</div>';
   if(!S.log.length)return h+'<div class="empty">Statistika atsiras po pirmų skenavimų.</div>';
   _stC=null;
   const A=statData(),W=A.W,uses=A.uses,wos=A.wos;
   const T=[['sum','Apžvalga'],['items','Pagal prekę'],['wo','Nurašymai'],['ppl','Gydytojai ir procedūros'],['val','Atsargų vertė']];
   if(!T.some(t=>t[0]===ui.stS))ui.stS='sum';
-  h+='<div class="chips" style="margin-top:10px" role="tablist" aria-label="Statistikos skyriai">'+T.map(t=>'<button class="chip" role="tab" data-act="sts" data-v="'+t[0]+'" aria-pressed="'+(ui.stS===t[0])+'">'+t[1]+'</button>').join('')+'</div>';
-  h+='<div class="actions" style="margin-top:8px"><button class="btn ghost" data-act="csvx" data-v="stat" data-dl hidden>Eksportuoti šį skyrių CSV</button></div>';
+  h+='<div class="stsec" role="tablist" aria-label="Statistikos skyriai">'+T.map(t=>'<button class="chip" role="tab" data-act="sts" data-v="'+t[0]+'" aria-pressed="'+(ui.stS===t[0])+'">'+t[1]+'</button>').join('')+'</div>';
+  h+='<div class="actions" style="margin-top:8px"><button class="btn ghost" data-act="csvx" data-v="stat" data-dl hidden style="min-height:40px">Eksportuoti CSV</button></div>';
   const sec=(t,b)=>'<section><h2>'+t+'</h2>'+b+'</section>';
   const top=(m,n,cls,fmt)=>{const l=Object.keys(m).map(k=>({k:k,q:m[k].q,v:m[k].v,p:m[k].p?m[k].p.size:0})).sort((a,b)=>b.v-a.v),mx=Math.max.apply(null,l.map(r=>r.v).concat([1]));
     return {l:l,html:'<div class="units">'+l.slice(0,n).map(r=>srow(r.k,'','<b>'+r.q+' vnt.</b>',eur.format(r.v)+(r.p?' · '+r.p+' proc.':''),r.v/mx*100,cls)).join('')+'</div>'+(l.length>n?'<div class="sub" style="margin:-4px 0 12px">Dar '+(l.length-n)+' eil. nerodoma</div>':'')};};
@@ -1864,7 +1887,8 @@ document.addEventListener('change',async e=>{
   if(id&&id.indexOf('ed-abc-')===0){const w=$('#ed-packw-'+id.slice(7));if(w)w.hidden=e.target.value!=='B';return;}
   if(id==='lfrom'||id==='lto'){if(id==='lfrom')ui.logFrom=e.target.value;else ui.logTo=e.target.value;ui.logN=40;render();return;}
   if(id==='dest'){ui.dest=e.target.value;render();return;}
-  if(id==='sfrom'||id==='sto'){if(id==='sfrom')ui.statFrom=e.target.value;else ui.statTo=e.target.value;render();return;}
+  if(id==='statsel'){ui.statSel=e.target.value;const x=document.createElement('button');x.dataset.act='statp';x.dataset.v=e.target.value;x.hidden=true;document.body.appendChild(x);x.click();x.remove();return;}
+  if(id==='sfrom'||id==='sto'){ui.statSel='c';if(id==='sfrom')ui.statFrom=e.target.value;else ui.statTo=e.target.value;render();return;}
   if(id&&id.indexOf('orn-')===0&&id!=='orn-new'){
     const k=+id.slice(4),old=ORS[k],n=(e.target.value||'').trim();if(!old||n===old)return;
     const bad=locBad(n,old);if(bad){toast(bad,'crit');e.target.value=old;return;}
